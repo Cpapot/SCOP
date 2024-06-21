@@ -81,11 +81,9 @@ clean:
 	@${RM} ${TARGET}
 	@${RM} "Cargo.lock"
 
-fclean:
+fclean: clean
 	@echo "${RED}🗑  ${NAME} cleanded"
-	@${RM} TARGET
 	@${RM} ${NAME}
-	@${RM} cargo.lock
 
 header:
 	@echo "$$HEADER"
