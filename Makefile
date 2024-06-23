@@ -76,7 +76,6 @@ ${NAME}: $(SRCS)
 	@echo -n "${SUPPR} ${GREEN}	${NAME} : 🆗${DEFAULT}\n"
 	@mv ${EXECUTABLE} .
 
-
 clean:
 	@${RM} ${TARGET}
 	@${RM} "Cargo.lock"
