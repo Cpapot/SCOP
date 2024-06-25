@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
+#openGL
 glutin = "0.28.0"
 gl = "0.14.0"
+#File explorer
 rfd = "0.12.1"

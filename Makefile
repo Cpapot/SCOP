@@ -48,7 +48,8 @@ export HEADER
 #				| |    | | |  __/\__ \.
 #				|_|    |_|_|\___||___/
 
-SRCSFILES		=	main.rs
+SRCSFILES		=	main.rs		\
+					parsing.rs	\
 
 #					Full Path
 
@@ -72,7 +73,7 @@ EXECUTABLE		=	$(EXECUTABLEPATH)$(NAME)
 all : header ${NAME}
 
 ${NAME}: $(SRCS)
-	@cargo build --release
+	cargo build --release
 	@echo -n "${SUPPR} ${GREEN}	${NAME} : 🆗${DEFAULT}\n"
 	@mv ${EXECUTABLE} .
 
