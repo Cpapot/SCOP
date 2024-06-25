@@ -50,6 +50,7 @@ export HEADER
 
 SRCSFILES		=	main.rs		\
 					parsing.rs	\
+					window.rs
 
 #					Full Path
 

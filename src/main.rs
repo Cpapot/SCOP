@@ -37,8 +37,8 @@ extern crate rfd;
 mod parsing;
 mod window;
 
-fn main() {
-	// Ouvrir un explorateur de fichiers pour choisir un fichier
+fn main()
+{
 	let file = rfd::FileDialog::new()
 		.set_title("Choisir un fichier")
 		.pick_file();
@@ -58,6 +58,12 @@ fn main() {
 			Err(e) =>
 			{
 				println!("Erreur : {}", e);
+				return;
 			}
+		}
+		match window::setup_window()
+		{
+			Ok(data) => window::run_window(data.windowed_context, data.event_loop),
+			Err(e) => println!("Erreur : {}", e),
 		}
 }
