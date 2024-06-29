@@ -79,11 +79,11 @@ ${NAME}: $(SRCS)
 	@mv ${EXECUTABLE} .
 
 clean:
-	@${RM} ${TARGET}
+	cargo clean
 	@${RM} "Cargo.lock"
+	@echo "${YELLOW}🧹  ${NAME} cleaned"
 
 fclean: clean
-	@echo "${RED}🗑  ${NAME} cleanded"
 	@${RM} ${NAME}
 
 header:
