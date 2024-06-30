@@ -1,63 +1,55 @@
-extern crate glutin;
-extern crate gl;
+extern crate glium;
+extern crate winit;
+use glium::Surface;
+use winit::event_loop;
 
-use glutin::dpi::LogicalSize;
-use glutin::event::{Event, WindowEvent};
-use glutin::event_loop::ControlFlow;
-use glutin::window::WindowBuilder;
-use glutin::ContextBuilder;
+#[derive(Copy, Clone)]
+struct Vertex {
+	position: [f32; 2],
+}
+glium::implement_vertex!(Vertex, position);
 
 pub struct Opengldata {
-	pub event_loop: glutin::event_loop::EventLoop<()>,
-	pub windowed_context: glutin::ContextWrapper<glutin::PossiblyCurrent, glutin::window::Window>,
+	pub event_loop: event_loop::EventLoop<()>,
  }
 
-
 const XSIZE: f64 = 800.0;
-const YSIZE: f64 = 600.0;
+const YSIZE: f64 = 800.0;
 
 
 pub fn setup_window() -> Result<Opengldata, std::io::Error>
 {
-	let wb = WindowBuilder::new()
-		.with_title("Fenêtre OpenGL")
-		.with_inner_size(LogicalSize::new(XSIZE, YSIZE));
+	let event_loop = event_loop::EventLoopBuilder::new()
+		.build()
+		.expect("event loop building");
 
-	let event_loop = glutin::event_loop::EventLoop::new();
+	let (_window, display) = glium::backend::glutin::SimpleWindowBuilder::new()
+		.with_title("OpenGL window")
+		.build(&event_loop);
 
-	let windowed_context = ContextBuilder::new()
-		.with_vsync(true)
-		.build_windowed(wb, &event_loop)
-		.unwrap();
+	let mut frame = display.draw();
+	frame.clear_color(0.0, 0.0, 1.0, 1.0);
+	frame.finish().unwrap();
 
 	let data: Opengldata = Opengldata {
 		event_loop: event_loop,
-		windowed_context: unsafe {windowed_context.make_current().unwrap()},
 	};
-
-	gl::load_with(|symbol| data.windowed_context.get_proc_address(symbol) as *const _);
-
-	unsafe {gl::ClearColor(0.1, 0.2, 0.3, 1.0);}
 	return Ok(data);
 }
 
-pub fn run_window(windowed_context: glutin::ContextWrapper<glutin::PossiblyCurrent, glutin::window::Window>, event_loop: glutin::event_loop::EventLoop<()>)
+pub fn run_window(event_loop: winit::event_loop::EventLoop<()>)
 {
-	event_loop.run(move |event, _, control_flow| {
-		*control_flow = ControlFlow::Wait;
+	event_loop.run(move |event, window_target|
+	{
 		match event
 		{
-			Event::WindowEvent { event, .. } => match event
-			{WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,_ => (),},
-			Event::RedrawRequested(_) =>
+			winit::event::Event::WindowEvent { event, .. } =>
+			match event
 			{
-				unsafe
-				{
-					gl::Clear(gl::COLOR_BUFFER_BIT);
-					//shader
-				}
-				windowed_context.swap_buffers().unwrap();
-			},_ => (),
-		}
-	});
+				winit::event::WindowEvent::CloseRequested => window_target.exit(),
+				_ => (),
+			},
+			_ => (),
+		};
+	}).unwrap();
 }

@@ -5,7 +5,7 @@ edition = "2018"
 
 [dependencies]
 #openGL
-glutin = "0.28.0"
-gl = "0.14.0"
+winit = "0.29.15"
+glium = "0.34.0"
 #File explorer
 rfd = "0.12.1"

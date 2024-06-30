@@ -39,31 +39,31 @@ mod window;
 
 fn main()
 {
-	let file = rfd::FileDialog::new()
+	/*let file = rfd::FileDialog::new()
 		.set_title("Choisir un fichier")
 		.pick_file();
 
-		if file.is_none() {
-			println!("Aucun fichier sélectionné");
+	if file.is_none() {
+		println!("Aucun fichier sélectionné");
+		return;
+	}
+	println!("Fichier sélectionné : {:?}", file);
+	match parsing::parse_obj(file.unwrap().to_str().unwrap())
+	{
+		Ok(res) =>
+		{
+			println!("Fichier lu avec succès");
+			parsing::print_objdata(&res);
+		}
+		Err(e) =>
+		{
+			println!("Erreur : {}", e);
 			return;
 		}
-		println!("Fichier sélectionné : {:?}", file);
-		match parsing::parse_obj(file.unwrap().to_str().unwrap())
-		{
-			Ok(res) =>
-			{
-				println!("Fichier lu avec succès");
-				parsing::print_objdata(&res);
-			}
-			Err(e) =>
-			{
-				println!("Erreur : {}", e);
-				return;
-			}
-		}
-		match window::setup_window()
-		{
-			Ok(data) => window::run_window(data.windowed_context, data.event_loop),
-			Err(e) => println!("Erreur : {}", e),
-		}
+	}*/
+	match window::setup_window()
+	{
+		Ok(data) => window::run_window(data.event_loop),
+		Err(e) => println!("Erreur : {}", e),
+	}
 }
