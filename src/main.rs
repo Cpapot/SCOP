@@ -34,6 +34,9 @@ fn main()
 }*/
 extern crate rfd;
 
+#[macro_use]
+extern crate glium;
+
 mod parsing;
 mod window;
 
@@ -61,9 +64,5 @@ fn main()
 			return;
 		}
 	}*/
-	match window::setup_window()
-	{
-		Ok(data) => window::run_window(data.event_loop),
-		Err(e) => println!("Erreur : {}", e),
-	}
+	window::run_window();
 }
