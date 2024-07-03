@@ -6,6 +6,6 @@ edition = "2018"
 [dependencies]
 #openGL
 winit = "0.29.15"
-glium = "0.34.0"
+glium = "*"
 #File explorer
 rfd = "0.12.1"
