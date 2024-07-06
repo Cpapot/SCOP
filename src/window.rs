@@ -29,10 +29,15 @@ pub fn run_window()
 
     in vec2 position;
 
+    uniform float x;
+	uniform float y;
+
     void main() {
-        gl_Position = vec4(position, 0.0, 1.0);
-    }
-	"#;
+        vec2 pos = position;
+        pos.x += x;
+		pos.y += y;
+        gl_Position = vec4(pos, 0.0, 1.0);
+    }"#;
 
 	let fragment_shader_src = r#"
 	#version 330
@@ -44,14 +49,7 @@ pub fn run_window()
     }
 	"#;
 
-    let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
-
-	let mut frame = display.draw();
-	frame.clear_color(0.0, 0.0, 1.0, 1.0);
-	frame.draw(&vertex_buffer, &indices, &program, &glium::uniforms::EmptyUniforms,
-		&Default::default()).unwrap();
-	frame.finish().unwrap();
-
+	let mut t: f32 = 0.0;
 	event_loop.run(move |event, window_target|
 	{
 		match event
@@ -60,7 +58,25 @@ pub fn run_window()
 			match event
 			{
 				winit::event::WindowEvent::CloseRequested => window_target.exit(),
+				winit::event::WindowEvent::Resized(window_size) => {display.resize(window_size.into());},
+				winit::event::WindowEvent::RedrawRequested => {
+					let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
+
+					t += 0.02;
+
+					let x_off = t.sin() * 0.5;
+					let y_off = (t * 8.0).sin() * 0.5;
+
+					let mut frame = display.draw();
+					frame.clear_color(0.0, 0.0, 1.0, 1.0);
+					frame.draw(&vertex_buffer, &indices, &program, &uniform! {x: x_off, y: y_off},
+						&Default::default()).unwrap();
+					frame.finish().unwrap();
+				},
 				_ => (),
+			},
+			winit::event::Event::AboutToWait => {
+				_window.request_redraw();
 			},
 			_ => (),
 		};
