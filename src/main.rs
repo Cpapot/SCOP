@@ -56,7 +56,7 @@ fn main()
 		Ok(res) =>
 		{
 			println!("Fichier lu avec succès");
-			parsing::print_objdata(&res);
+			//parsing::print_objdata(&res);
 			window::run_window(res);
 		}
 		Err(e) =>

@@ -1,7 +1,35 @@
 extern crate winit;
-use glium::Surface;
+use glium::{vertex, Surface};
 
 use crate::parsing::Objdata;
+
+#[derive(Copy, Clone)]
+struct Vertex {
+	position: [f32; 3],
+	color: [f32; 3],
+}
+
+fn convert_to_face(face: Vec<(f64, f64, f64)>) -> Vec<u16>
+{
+	let mut vec :Vec<u16> = vec![];
+	for i in 0..face.len()
+	{
+		vec.push(face[i].0 as u16);
+		vec.push(face[i].1 as u16);
+		vec.push(face[i].2 as u16);
+	}
+	return vec;
+}
+
+fn convert_to_vertexstruct(vertex_data: Vec<(f64, f64, f64)>) -> Vec<Vertex>
+{
+	vertex_data.into_iter().map(|(x, y, z)| {
+		Vertex {
+			position: [x as f32, y as f32, z as f32],
+			color: [x as f32, y as f32, z as f32],
+		}
+	}).collect()
+}
 
 pub fn run_window(data: Objdata)
 {
@@ -13,22 +41,18 @@ pub fn run_window(data: Objdata)
 		.with_title("OpenGL window")
 		.build(&event_loop);
 
-	#[derive(Copy, Clone)]
-	struct Vertex {
-		position: [f32; 2],
-		color: [f32; 3],
-	}
 	implement_vertex!(Vertex, position, color);
 
-	let vertex1 = Vertex { position: [-0.5, -0.5], color: [1.0, 0.0, 0.0]};
-	let vertex2 = Vertex { position: [ 0.0,  0.5], color: [0.0, 1.0, 0.0]};
-	let vertex3 = Vertex { position: [ 0.5, -0.25], color: [0.0, 0.0, 1.0] };
-	let shape = vec![vertex1, vertex2, vertex3];
+	let shape :Vec<Vertex> = convert_to_vertexstruct(data.vertex);
 
+	/*for i in 0..shape.len()
+	{
+		println!("vertex: x:{:?}, y:{:?}, z:{:?}", shape[i].position[0], shape[i].position[1], shape[i].position[2]);
+	}*/
 
-	let vertex_buffer = glium::vertex::VertexBuffer::new(&display, &shape).unwrap();
-	let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+	let pos = glium::vertex::VertexBuffer::new(&display, &shape).unwrap();
 
+	let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList,&convert_to_face(data.face)).unwrap();
 	let vertex_shader_src = r#"
 	#version 330
 
@@ -40,7 +64,7 @@ pub fn run_window(data: Objdata)
 
     void main() {
 		vertex_color = color;
-        gl_Position = matrix * vec4(position, 0.0, 1.0);
+        gl_Position = matrix * vec4(position, 1.0);
     }
 	"#;
 
@@ -72,16 +96,16 @@ pub fn run_window(data: Objdata)
 
 					let uniforms = uniform! {
 						matrix: [
-							[ t.cos(), t.sin(), 0.0, 0.0],
-							[-t.sin(), t.cos(), 0.0, 0.0],
-							[0.0, 0.0, 1.0, 0.0],
-							[0.0, 0.0, 0.0, 1.0f32],
+							[t.cos() * 0.1, t.sin() * 0.1 , 0.0, 0.0],
+							[t.sin() * 0.1, t.cos() * 0.1, 0.0, 0.0],
+							[0.0, 0.0, 0.1, 0.0],
+							[0.0, 0.0, 0.0, 1.0f32]
 						]
 					};
 
 					let mut frame = display.draw();
 					frame.clear_color(0.0, 0.0, 1.0, 1.0);
-					frame.draw(&vertex_buffer, &indices, &program, &uniforms,
+					frame.draw(&pos, &indices, &program, &uniforms,
 						&Default::default()).unwrap();
 					frame.finish().unwrap();
 				},
