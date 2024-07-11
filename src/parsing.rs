@@ -6,14 +6,14 @@
 /*   By: cpapot <cpapot@student.42lyon.fr >         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:48:41 by cpapot            #+#    #+#             */
-/*   Updated: 2024/07/06 17:54:47 by cpapot           ###   ########.fr       */
+/*   Updated: 2024/07/11 19:02:42 by cpapot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 pub struct Objdata {
 	pub vertex:Vec<(f64, f64, f64)>,
 	normal:Vec<(f64, f64, f64)>,
-	face:Vec<(f64, f64, f64)>
+	pub face:Vec<(f64, f64, f64)>
  }
 
 macro_rules! get_value {
