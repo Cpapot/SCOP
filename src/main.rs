@@ -42,7 +42,7 @@ mod window;
 
 fn main()
 {
-	/*let file = rfd::FileDialog::new()
+	let file = rfd::FileDialog::new()
 		.set_title("Choisir un fichier")
 		.pick_file();
 
@@ -57,12 +57,12 @@ fn main()
 		{
 			println!("Fichier lu avec succès");
 			parsing::print_objdata(&res);
+			window::run_window(res);
 		}
 		Err(e) =>
 		{
 			println!("Erreur : {}", e);
 			return;
 		}
-	}*/
-	window::run_window();
+	}
 }
