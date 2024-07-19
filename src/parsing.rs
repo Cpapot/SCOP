@@ -6,17 +6,25 @@
 /*   By: cpapot <cpapot@student.42lyon.fr >         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:48:41 by cpapot            #+#    #+#             */
-/*   Updated: 2024/07/11 19:02:42 by cpapot           ###   ########.fr       */
+/*   Updated: 2024/07/19 15:27:55 by cpapot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 pub struct Objdata {
 	pub vertex:Vec<(f64, f64, f64)>,
 	normal:Vec<(f64, f64, f64)>,
+	pub indexs:Vec<u16>,
 	pub face:Vec<(f64, f64, f64)>
  }
 
-macro_rules! get_value {
+ macro_rules! get_u16_value {
+	($lineindex:expr, $words:expr) => {
+		$words.next().ok_or_else(|| std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("invalid value at line: {}", $lineindex)))?
+		.parse::<u16>().map_err(|_| std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("invalid value at line: {}", $lineindex)))?
+	};
+}
+
+macro_rules! get_f64_value {
 	($lineindex:expr, $words:expr) => {
 		$words.next().ok_or_else(|| std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("invalid value at line: {}", $lineindex)))?
 		.parse::<f64>().map_err(|_| std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("invalid value at line: {}", $lineindex)))?
@@ -48,7 +56,7 @@ fn	read_file(path: &str) -> Result<String, std::io::Error>
 
 fn fill_struct(content: &String) -> Result<Objdata, std::io::Error>
 {
-	let mut data = Objdata{vertex:Vec::new(), normal:Vec::new(), face:Vec::new()};
+	let mut data = Objdata{vertex:Vec::new(), normal:Vec::new(), face:Vec::new(), indexs:Vec::new()};
 	let lines = content.lines();
 	let mut lineindex = 0;
 	for line in lines
@@ -61,26 +69,21 @@ fn fill_struct(content: &String) -> Result<Objdata, std::io::Error>
 		{
 			let size: usize = words.clone().count();
 			if size != 3 {return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "vertex is not a 3D point"));}
-			let x = get_value!(lineindex, words);
-			let y = get_value!(lineindex, words);
-			let z = get_value!(lineindex, words);
+			let x = get_f64_value!(lineindex, words);
+			let y = get_f64_value!(lineindex, words);
+			let z = get_f64_value!(lineindex, words);
 			data.vertex.push((x, y, z));
 		}
 		if word == "f"
 		{
 			let size = words.clone().count();
-			let mut index = 3;
+			let mut index = 0;
 			if size < 3 {return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "face is not a 3D point"));}
 
-			let x = get_value!(lineindex, words);
-			let y = get_value!(lineindex, words);
-			let z = get_value!(lineindex, words);
-			data.face.push((x, y, z));
 			while index < size
 			{
-				let y = z;
-				let z = words.next().unwrap().parse::<f64>().unwrap();
-				data.face.push((x, y, z));
+				let value: u16 = get_u16_value!(lineindex, words);
+				data.indexs.push(value - 1);
 				index += 1;
 			}
 		}

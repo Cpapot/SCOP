@@ -52,7 +52,7 @@ pub fn run_window(data: Objdata)
 
 	let pos = glium::vertex::VertexBuffer::new(&display, &shape).unwrap();
 
-	let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList,&convert_to_face(data.face)).unwrap();
+	let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList,&data.indexs).unwrap();
 	let vertex_shader_src = r#"
 	#version 330
 
@@ -80,7 +80,6 @@ pub fn run_window(data: Objdata)
 	"#;
 
 	let program = glium::Program::from_source(&display, vertex_shader_src, fragment_shader_src, None).unwrap();
-	let mut t: f32 = 0.0;
 	event_loop.run(move |event, window_target|
 	{
 		match event
@@ -92,12 +91,10 @@ pub fn run_window(data: Objdata)
 				winit::event::WindowEvent::Resized(window_size) => {display.resize(window_size.into());},
 				winit::event::WindowEvent::RedrawRequested => {
 
-					t += 0.02;
-
 					let uniforms = uniform! {
 						matrix: [
-							[t.cos() * 0.1, t.sin() * 0.1 , 0.0, 0.0],
-							[t.sin() * 0.1, t.cos() * 0.1, 0.0, 0.0],
+							[0.1, 0.0, 0.0, 0.0],
+							[0.0, 0.1, 0.0, 0.0],
 							[0.0, 0.0, 0.1, 0.0],
 							[0.0, 0.0, 0.0, 1.0f32]
 						]
