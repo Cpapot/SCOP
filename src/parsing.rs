@@ -6,7 +6,7 @@
 /*   By: cpapot <cpapot@student.42lyon.fr >         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:48:41 by cpapot            #+#    #+#             */
-/*   Updated: 2024/07/22 14:50:20 by cpapot           ###   ########.fr       */
+/*   Updated: 2024/08/01 14:17:50 by cpapot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,11 +122,14 @@ fn fill_struct(content: &String) -> Result<Objdata, std::io::Error>
 	{
 		for face in data.indexs.chunks(3)
 		{
-			let v1 = data.vertex[face[0] as usize];
-			let v2 = data.vertex[face[1] as usize];
-			let v3 = data.vertex[face[2] as usize];
-			let normal = calculate_normal(v1, v2, v3);
-			data.normal.push(normal);
+			if face.len() == 3
+			{
+				let v1 = data.vertex[face[0] as usize];
+				let v2 = data.vertex[face[1] as usize];
+				let v3 = data.vertex[face[2] as usize];
+				let normal = calculate_normal(v1, v2, v3);
+				data.normal.push(normal);
+			}
 		}
 	}
 	return Ok(data);
